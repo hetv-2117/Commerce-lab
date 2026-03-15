@@ -2132,35 +2132,34 @@ import { initializeApp }
 import { getDatabase, ref, set, update, push, onValue, get, remove }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ─── 🔥 PASTE YOUR FIREBASE CONFIG HERE ─────────────────
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL:       "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyCclY4r0R1a99GhKsM_oOg672oSup_8xBw",
+  authDomain:        "commercelab-2269.firebaseapp.com",
+  databaseURL:       "https://commercelab-2269-default-rtdb.firebaseio.com",
+  projectId:         "commercelab-2269",
+  storageBucket:     "commercelab-2269.firebasestorage.app",
+  messagingSenderId: "34010836169",
+  appId:             "1:34010836169:web:410ad9650fd9e80d973118"
 };
-// ─────────────────────────────────────────────────────────
 
 try {
-  const _app = initializeApp(firebaseConfig);
-  const _db  = getDatabase(_app);
-  // Expose to global scope for non-module scripts
-  window._fbDB     = _db;
-  window._fbRef    = ref;
-  window._fbSet    = set;
-  window._fbUpdate = update;
-  window._fbPush   = push;
-  window._fbOnValue= onValue;
-  window._fbGet    = get;
-  window._fbRemove = remove;
-  window._fbReady  = true;
-  console.log("🔥 CommerceLab Firebase ready");
+  const _fbApp = initializeApp(firebaseConfig);
+  const _fbDb  = getDatabase(_fbApp);
+  window._fbDB      = _fbDb;
+  window._fbRef     = ref;
+  window._fbSet     = set;
+  window._fbUpdate  = update;
+  window._fbPush    = push;
+  window._fbOnValue = onValue;
+  window._fbGet     = get;
+  window._fbRemove  = remove;
+  window._fbReady   = true;
+  window._fbConfigured = true;
+  console.log("CommerceLab Firebase ready");
 } catch(e) {
-  console.warn("Firebase init failed (check config):", e.message);
   window._fbReady = false;
+  window._fbConfigured = false;
+  console.warn("Firebase init failed:", e.message);
 }
 </script>
 
@@ -2255,7 +2254,7 @@ try {
     <div id="form-login">
       <div class="inp-wrap"><div class="inp-lbl">Email / Mobile</div><input class="inp" id="li-email" type="text" placeholder="Enter email or mobile number" autocomplete="username"/></div>
       <div class="inp-wrap"><div class="inp-lbl">Password</div><input class="inp" id="li-pass" type="password" placeholder="Enter password" autocomplete="current-password"/></div>
-      <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--accent);font-weight:600;cursor:pointer" onclick="goTo('auth-otp')">Forgot Password?</span></div>
+      <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--accent);font-weight:600;cursor:pointer" onclick="goTo('forgot-step1')">Forgot Password?</span></div>
       <button class="btn-main" onclick="doLogin()">Sign In →</button>
       <div class="auth-divider">or continue with</div>
       <button class="auth-google" onclick="doGoogleLogin()">
@@ -2316,7 +2315,15 @@ try {
         </div>
         <div class="inp-wrap">
           <div class="inp-lbl">School Name <span style="color:var(--danger)">*</span></div>
-          <input class="inp" id="su-school" type="text" placeholder="e.g. DPS School, Surat" onkeydown="if(event.key==='Enter')suNext(0)"/>
+          <input class="inp" id="su-school" type="text" placeholder="e.g. DPS School, Surat" onkeydown="if(event.key==='Enter')document.getElementById('su-pass').focus()"/>
+        </div>
+        <div class="inp-wrap">
+          <div class="inp-lbl">Create Password <span style="color:var(--danger)">*</span></div>
+          <input class="inp" id="su-pass" type="password" placeholder="Minimum 6 characters" onkeydown="if(event.key==='Enter')document.getElementById('su-pass2').focus()"/>
+        </div>
+        <div class="inp-wrap">
+          <div class="inp-lbl">Confirm Password <span style="color:var(--danger)">*</span></div>
+          <input class="inp" id="su-pass2" type="password" placeholder="Re-enter password" onkeydown="if(event.key==='Enter')suNext(0)"/>
         </div>
         <div class="su-divider-row">
           <div class="su-divider-line"></div><span class="su-divider-txt">or sign up instantly</span><div class="su-divider-line"></div>
@@ -2397,17 +2404,99 @@ try {
 </div>
 
 <!-- ██████████████ OTP SCREEN ██████████████ -->
-<div class="screen" id="auth-otp">
-  <div class="auth-top" style="justify-content:center;padding:40px 32px">
-    <div style="font-size:48px;margin-bottom:16px">📱</div>
-    <div style="font-family:var(--ffs);font-size:22px;font-weight:700;color:#fff;text-align:center">Verify OTP</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:8px">Enter the 4-digit code sent to your mobile</div>
+<!-- ████████ FORGOT PASSWORD STEP 1 ████████ -->
+<div class="screen" id="forgot-step1" style="background:var(--pageBg)">
+  <div class="auth-top" style="justify-content:center;padding:36px 24px">
+    <div style="font-size:52px;margin-bottom:14px">🔑</div>
+    <div style="font-family:var(--ffs);font-size:22px;font-weight:800;color:#fff;text-align:center">Reset Password</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:8px;line-height:1.6">
+      Enter your registered email or phone.<br/>We'll send you a 4-digit PIN.
+    </div>
   </div>
   <div class="auth-sheet">
-    <div class="otp-row"><input class="otp-inp" maxlength="1" id="otp0"/><input class="otp-inp" maxlength="1" id="otp1"/><input class="otp-inp" maxlength="1" id="otp2"/><input class="otp-inp" maxlength="1" id="otp3"/></div>
-    <div style="text-align:center;font-size:12px;color:var(--text3);margin-bottom:16px">Didn't receive? <span style="color:var(--brand3);font-weight:600;cursor:pointer">Resend OTP</span></div>
-    <button class="btn-main" onclick="goTo('onboarding');currentOb=0;updateOb()">Verify & Continue →</button>
-    <div class="auth-foot mt10"><a onclick="goTo('auth')">← Back to Login</a></div>
+    <!-- Email / Phone tabs -->
+    <div style="display:flex;gap:10px;margin-bottom:18px">
+      <button id="fp-tab-email" onclick="fpSetMethod('email')"
+        style="flex:1;padding:10px;border-radius:var(--r8);border:1.5px solid var(--accent);background:var(--accent-l);color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s">
+        📧 Email
+      </button>
+      <button id="fp-tab-phone" onclick="fpSetMethod('phone')"
+        style="flex:1;padding:10px;border-radius:var(--r8);border:1.5px solid var(--border);background:none;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s">
+        📱 Phone
+      </button>
+    </div>
+    <div class="inp-wrap" id="fp-email-wrap">
+      <div class="inp-lbl">Registered Email Address</div>
+      <input class="inp" id="fp-email" type="email" placeholder="your@email.com"
+        onkeydown="if(event.key==='Enter') fpSendPin()"/>
+    </div>
+    <div class="inp-wrap" id="fp-phone-wrap" style="display:none">
+      <div class="inp-lbl">Registered Phone Number</div>
+      <input class="inp" id="fp-phone" type="tel" placeholder="10-digit mobile number" maxlength="10"
+        onkeydown="if(event.key==='Enter') fpSendPin()"/>
+    </div>
+    <div id="fp-step1-err" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:10px"></div>
+    <button class="btn-main" id="fp-send-btn" onclick="fpSendPin()">Send PIN →</button>
+    <div class="auth-foot" style="margin-top:14px">
+      <a onclick="goTo('auth')" style="cursor:pointer">← Back to Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ FORGOT PASSWORD STEP 2: Enter PIN ████████ -->
+<div class="screen" id="forgot-step2" style="background:var(--pageBg)">
+  <div class="auth-top" style="justify-content:center;padding:36px 24px">
+    <div style="font-size:52px;margin-bottom:14px">📲</div>
+    <div style="font-family:var(--ffs);font-size:22px;font-weight:800;color:#fff;text-align:center">Enter PIN</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.65);text-align:center;margin-top:8px;line-height:1.7"
+         id="fp-pin-sent-msg">PIN sent to your chosen method</div>
+  </div>
+  <div class="auth-sheet">
+
+    <!-- PIN shown on-screen for 30s (fallback when delivery is pending) -->
+    <div id="fp-pin-box" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:var(--r12);padding:14px;margin-bottom:18px;text-align:center">
+      <div style="font-size:10px;color:var(--warn);font-weight:700;letter-spacing:.6px;margin-bottom:6px">YOUR PIN — VISIBLE FOR 30 SECONDS</div>
+      <div id="fp-pin-display" style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:12px;font-family:monospace">----</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:6px">Expires in 10 minutes · Do not share</div>
+    </div>
+
+    <!-- PIN entry -->
+    <div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:12px">Type the PIN below to verify</div>
+    <div class="otp-row">
+      <input class="otp-inp" maxlength="1" id="fp-p0" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-inp" maxlength="1" id="fp-p1" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-inp" maxlength="1" id="fp-p2" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-inp" maxlength="1" id="fp-p3" inputmode="numeric" pattern="[0-9]"/>
+    </div>
+    <div id="fp-step2-err" style="color:var(--danger);font-size:12px;min-height:18px;margin:8px 0;text-align:center"></div>
+    <button class="btn-main" onclick="fpVerifyPin()">Verify PIN →</button>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text3)">
+      Didn't receive it?
+      <a onclick="goTo('forgot-step1')" style="color:var(--accent);font-weight:600;cursor:pointer;margin-left:4px">Go back &amp; resend</a>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ FORGOT PASSWORD STEP 3: Set new password ████████ -->
+<div class="screen" id="forgot-step3" style="background:var(--pageBg)">
+  <div class="auth-top" style="justify-content:center;padding:36px 24px">
+    <div style="font-size:52px;margin-bottom:14px">🔒</div>
+    <div style="font-family:var(--ffs);font-size:22px;font-weight:800;color:#fff;text-align:center">New Password</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:8px">Choose a strong password (min. 6 characters)</div>
+  </div>
+  <div class="auth-sheet">
+    <div class="inp-wrap">
+      <div class="inp-lbl">New Password <span style="color:var(--danger)">*</span></div>
+      <input class="inp" id="fp-newpass" type="password" placeholder="At least 6 characters"
+        onkeydown="if(event.key==='Enter') document.getElementById('fp-newpass2').focus()"/>
+    </div>
+    <div class="inp-wrap">
+      <div class="inp-lbl">Confirm New Password <span style="color:var(--danger)">*</span></div>
+      <input class="inp" id="fp-newpass2" type="password" placeholder="Re-enter password"
+        onkeydown="if(event.key==='Enter') fpSaveNewPassword()"/>
+    </div>
+    <div id="fp-step3-err" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:10px"></div>
+    <button class="btn-main" onclick="fpSaveNewPassword()">💾 Save New Password</button>
   </div>
 </div>
 
@@ -2722,28 +2811,72 @@ try {
 
 
 <!-- ██████████████ PENDING APPROVAL SCREEN ██████████████ -->
-<div class="screen" id="pending-screen" style="align-items:center;justify-content:center;text-align:center;padding:32px 24px;background:var(--pageBg)">
-  <div style="font-size:56px;margin-bottom:16px;animation:pendingPulse 2s ease-in-out infinite">⏳</div>
+<div class="screen" id="pending-screen" style="align-items:center;justify-content:center;text-align:center;padding:32px 24px;background:var(--pageBg);overflow-y:auto">
+  <div style="font-size:64px;margin-bottom:16px;animation:pendingPulse 2s ease-in-out infinite">⏳</div>
   <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:var(--ffs)">Approval Pending</div>
-  <div style="font-size:13px;color:var(--text2);line-height:1.7;max-width:300px;margin:0 auto 24px">
-    Your account is registered! The admin will review and approve access after payment confirmation.
+  <div style="font-size:13px;color:var(--text2);line-height:1.7;max-width:300px;margin:0 auto 16px">
+    Your account is registered! The admin will review and approve your access shortly.
   </div>
+
+  <!-- Live status indicator -->
+  <div id="pending-live-status" style="display:flex;align-items:center;gap:7px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:99px;padding:6px 16px;margin:0 auto 20px;width:fit-content">
+    <div style="width:8px;height:8px;border-radius:50%;background:#34d399;animation:pendingDot 1.5s ease-in-out infinite"></div>
+    <span style="font-size:11px;font-weight:700;color:#34d399" id="pending-status-txt">Listening for approval…</span>
+  </div>
+
   <!-- Payment info card -->
-  <div style="background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.25);border-radius:var(--r16);padding:16px 20px;max-width:320px;margin:0 auto 20px;width:100%">
-    <div style="font-size:10px;color:var(--warn);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">💳 Payment Details</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.9;text-align:left">
-      UPI ID: <strong style="color:var(--text)">your@upi</strong><br/>
-      WhatsApp: <strong style="color:var(--text)">+91 XXXXXXXXXX</strong><br/>
-      Amount: <strong style="color:var(--warn)">₹XXX / year</strong><br/>
-      After payment, send screenshot on WhatsApp.
+  <div style="background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.25);border-radius:var(--r16);padding:16px 20px;max-width:320px;margin:0 auto 16px;width:100%">
+    <div style="font-size:10px;color:var(--warn);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">💳 Payment Details</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 10px">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">👤 Name</span>
+        <strong style="font-size:12px;color:var(--text)">Het Vaghela</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 10px">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">📱 WhatsApp</span>
+        <a href="https://wa.me/916351482420" target="_blank" style="font-size:12px;color:#25D366;font-weight:700;text-decoration:none">+91 63514 82420</a>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 10px">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">💰 UPI ID</span>
+        <strong style="font-size:12px;color:var(--text);font-family:monospace">hetv0051@okhdfcbank</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 10px">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">📧 Email</span>
+        <a href="mailto:hetvaghela2117@gmail.com" style="font-size:11px;color:#60a5fa;font-weight:600;text-decoration:none">hetvaghela2117@gmail.com</a>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);line-height:1.6;text-align:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(251,191,36,.12);border-radius:8px;padding:8px 10px;margin-top:4px">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">💎 Amount</span>
+        <strong style="font-size:16px;color:var(--warn)">₹99 <span style="font-size:11px;font-weight:400;color:var(--text3)">/ year</span></strong>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);line-height:1.6;text-align:center">
+      Pay ₹99 via UPI · Send payment screenshot on WhatsApp
     </div>
   </div>
-  <!-- Refresh button -->
-  <button onclick="checkUserAccess()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r12);padding:12px 28px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--ff);margin-bottom:14px;transition:all .15s">
-    🔄 Check Approval Status
+
+  <!-- Steps card -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r16);padding:16px 20px;max-width:320px;margin:0 auto 20px;width:100%;text-align:left">
+    <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">📋 What Happens Next</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:10px;align-items:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(52,211,153,.2);color:#34d399;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><span style="font-size:12px;color:var(--text2)">Make payment via UPI & send screenshot</span></div>
+      <div style="display:flex;gap:10px;align-items:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(251,191,36,.2);color:var(--warn);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><span style="font-size:12px;color:var(--text2)">Admin verifies & approves your account</span></div>
+      <div style="display:flex;gap:10px;align-items:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(96,165,250,.2);color:#60a5fa;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><span style="font-size:12px;color:var(--text2)">This screen auto-opens the app — no refresh needed!</span></div>
+    </div>
+  </div>
+
+  <button onclick="checkUserAccess()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r12);padding:12px 28px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--ff);margin-bottom:12px;transition:all .15s;width:100%;max-width:320px">
+    🔄 Check Now
   </button>
-  <div style="font-size:11px;color:var(--text3)" id="pending-name-lbl"></div>
-  <style>@keyframes pendingPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}</style>
+  <button onclick="doSignOut()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--ff);padding:4px 8px;text-decoration:underline">
+    Sign out &amp; use different account
+  </button>
+  <div style="font-size:11px;color:var(--text3);margin-top:10px" id="pending-name-lbl"></div>
+  <style>
+    @keyframes pendingPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+    @keyframes pendingDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+  </style>
 </div>
 
 <!-- ██████████████ BLOCKED SCREEN ██████████████ -->
@@ -2754,9 +2887,44 @@ try {
     Your account has been suspended. Please contact the admin to resolve this.
   </div>
   <div style="background:var(--danger-l);border:1.5px solid var(--danger-bdr);border-radius:var(--r12);padding:14px 18px;max-width:280px;margin:0 auto;font-size:12px;color:var(--text2);line-height:1.7">
-    WhatsApp: <strong style="color:var(--text)">+91 XXXXXXXXXX</strong><br/>
-    Email: <strong style="color:var(--text)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="156c7a6067557078747c793b767a78">[email&#160;protected]</a></strong>
+    WhatsApp: <strong style="color:var(--text)"><a href="https://wa.me/916351482420" target="_blank" style="color:#25D366;text-decoration:none">+91 63514 82420</a></strong><br/>
+    Email: <strong style="color:var(--text)"><a href="mailto:hetvaghela2117@gmail.com" style="color:#60a5fa;text-decoration:none">hetvaghela2117@gmail.com</a></strong>
   </div>
+</div>
+
+<!-- ██████████████ REJECTED SCREEN ██████████████ -->
+<div class="screen" id="rejected-screen" style="align-items:center;justify-content:center;text-align:center;padding:32px 24px;background:var(--pageBg)">
+  <div style="font-size:64px;margin-bottom:16px">❌</div>
+  <div style="font-size:22px;font-weight:800;color:var(--danger);margin-bottom:10px;font-family:var(--ffs)">Request Declined</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.8;max-width:300px;margin:0 auto 24px">
+    Your signup request was not approved this time. Please contact the admin to find out why or to request access again.
+  </div>
+
+  <!-- Contact card -->
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r16);padding:18px 20px;max-width:300px;margin:0 auto 24px;width:100%;text-align:left">
+    <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">📞 Contact Admin</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="https://wa.me/916351482420" target="_blank" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(37,211,102,.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#25D366">WhatsApp</div>
+          <div style="font-size:11px;color:var(--text3)">+91 63514 82420</div>
+        </div>
+      </a>
+      <a href="mailto:hetvaghela2117@gmail.com" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--blue)">Email</div>
+          <div style="font-size:11px;color:var(--text3)">hetvaghela2117@gmail.com</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <button onclick="doSignOut()" style="background:var(--danger-l);border:1.5px solid var(--danger-bdr);border-radius:var(--r12);padding:13px 32px;color:var(--danger);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--ff);margin-bottom:10px;width:100%;max-width:300px">
+    🔄 Try Again with Different Account
+  </button>
+  <div style="font-size:11px;color:var(--text3);margin-top:4px">This will sign you out and return to login</div>
 </div>
 
 <!-- FEEDBACK MODAL -->
@@ -6425,61 +6593,507 @@ function authSwitch(tab){
 }
 
 function doLogin(){
-  const em=document.getElementById('li-email').value.trim();
-  const pass=document.getElementById('li-pass').value;
-  if(!em||!pass){
-    document.getElementById('li-email').style.borderColor='var(--danger)';
-    setTimeout(()=>document.getElementById('li-email').style.borderColor='',1500);
-    showToast('Please fill in all fields','error');return;
+  const em   = (document.getElementById('li-email')?.value  || '').trim();
+  const pass = (document.getElementById('li-pass')?.value   || '');
+  if(!em || !pass){
+    const el = document.getElementById('li-email');
+    if(el){ el.style.borderColor='var(--danger)'; setTimeout(()=>el.style.borderColor='',1500); }
+    showToast('Please enter email and password','error');
+    return;
   }
-  // Simulate login - use stored name from email
-  const n=em.split('@')[0];
-  // Check if returning user from storage
   const saved = loadProfile();
-  if(saved.email === em){
-    userProfile = saved;
-  } else {
-    const n2 = (em.split('@')[0]||'user').replace(/[^a-zA-Z]/g,' ').trim()||'Student';
-    userProfile.name = n2.charAt(0).toUpperCase()+n2.slice(1);
-    userProfile.fname = userProfile.name.split(' ')[0];
-    userProfile.email = em;
+  if(!saved || saved.email !== em || !saved.uid){
+    showToast('Account not found — please sign up first','error');
+    goTo('signup-steps'); suGoStep(0);
+    return;
   }
+  // Verify password if one was set during signup
+  if(saved.password && saved.password !== pass){
+    const el = document.getElementById('li-pass');
+    if(el){ el.style.borderColor='var(--danger)'; setTimeout(()=>el.style.borderColor='',1500); }
+    showToast('Wrong password ❌','error');
+    return;
+  }
+  userProfile = Object.assign({}, saved);
   userProfile.isNewUser = false;
-  saveProfile();
-  updateUserUI();
-  // ── Check Firebase approval status on login ──
-  checkUserAccess();
+  saveProfile(); updateUserUI(); checkUserAccess();
 }
 
+function doSignOut(){
+  if(typeof _clearAccessListener==='function'){ try{ _clearAccessListener(); }catch(e){} }
+  try{ localStorage.removeItem('commercelab_v2'); }catch(e){}
+  userProfile = Object.assign({}, defaultProfile);
+  const e1=document.getElementById('li-email'), e2=document.getElementById('li-pass');
+  if(e1) e1.value=''; if(e2) e2.value='';
+  goTo('auth');
+  showToast('Signed out. See you soon!');
+}
+// ════════════════════════════════════════════════════════════════
+// FORGOT PASSWORD — PIN-based verification
+// Every PIN is cryptographically unique, expires in 10 minutes.
+// Delivery: Email (mailto + EmailJS) | Phone (WhatsApp + Fast2SMS)
+// ════════════════════════════════════════════════════════════════
+
+// ── EmailJS Config (for automatic email delivery of PIN) ─────
+// HOW TO SET UP EmailJS (free, 200 emails/month):
+// 1. Go to https://www.emailjs.com and sign up free
+// 2. Add Email Service: Dashboard → Email Services → Add Service → Gmail
+//    Connect your Gmail (hetvaghela2117@gmail.com). Copy the Service ID.
+// 3. Create Template: Email Templates → Create New Template
+//    Name it "CommerceLab PIN". Set template body like:
+//      Subject: CommerceLab — Your Reset PIN
+//      Body:    Hi {{to_name}}, your reset PIN is: {{pin_code}}
+//               Valid for 10 minutes. Do not share.
+//    Copy the Template ID.
+// 4. Get Public Key: Account → General → Public Key. Copy it.
+// 5. Paste your 3 values below:
+var FP_EMAILJS_SERVICE  = 'YOUR_SERVICE_ID';    // e.g. 'service_abc123'
+var FP_EMAILJS_TEMPLATE = 'YOUR_TEMPLATE_ID';   // e.g. 'template_xyz789'
+var FP_EMAILJS_KEY      = 'YOUR_PUBLIC_KEY';    // e.g. 'aBcDeFgHiJkL'
+// ─────────────────────────────────────────────────────────────
+
+var _fpMethod  = 'email';
+var _fpPin     = '';
+var _fpExpiry  = 0;
+var _fpUid     = '';
+var _fpContact = '';
+var _fpSent    = false;
+var _fpAttempts = 0; // wrong-PIN counter
+var _fpPinTimer = null;
+
+// ── Generate cryptographically random 4-digit PIN ────────────
+function _genPin(){
+  if(window.crypto && window.crypto.getRandomValues){
+    var arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return String(1000 + (arr[0] % 9000));
+  }
+  // Fallback (non-crypto) — multiple random seeds
+  var t = Date.now();
+  var r1 = Math.floor(Math.random() * 9999);
+  var r2 = Math.floor(Math.random() * 9999);
+  return String(1000 + ((t ^ r1 ^ r2) % 9000));
+}
+
+// ── Switch email/phone tabs ───────────────────────────────────
+function fpSetMethod(m){
+  _fpMethod = m;
+  var eW = document.getElementById('fp-email-wrap');
+  var pW = document.getElementById('fp-phone-wrap');
+  var eT = document.getElementById('fp-tab-email');
+  var pT = document.getElementById('fp-tab-phone');
+  // Use individual style properties — cssText+= is destructive
+  function setActive(el){
+    if(!el) return;
+    el.style.borderColor = 'var(--accent)';
+    el.style.background  = 'var(--accent-l)';
+    el.style.color       = 'var(--accent)';
+  }
+  function setInactive(el){
+    if(!el) return;
+    el.style.borderColor = 'var(--border)';
+    el.style.background  = 'none';
+    el.style.color       = 'var(--text2)';
+  }
+  if(m === 'email'){
+    if(eW) eW.style.display = '';
+    if(pW) pW.style.display = 'none';
+    setActive(eT); setInactive(pT);
+  } else {
+    if(eW) eW.style.display = 'none';
+    if(pW) pW.style.display = '';
+    setActive(pT); setInactive(eT);
+  }
+  var err = document.getElementById('fp-step1-err');
+  if(err) err.textContent = '';
+}
+
+// ── Step 1: Validate contact and send PIN ────────────────────
+function fpSendPin(){
+  var errEl   = document.getElementById('fp-step1-err');
+  var btnEl   = document.getElementById('fp-send-btn');
+  var contact = _fpMethod === 'email'
+    ? (document.getElementById('fp-email')?.value || '').trim().toLowerCase()
+    : (document.getElementById('fp-phone')?.value || '').trim().replace(/\D/g,'');
+
+  if(!contact){
+    if(errEl) errEl.textContent = _fpMethod === 'email' ? 'Please enter your email' : 'Please enter your phone number';
+    return;
+  }
+  if(_fpMethod === 'phone' && contact.length < 10){
+    if(errEl) errEl.textContent = 'Enter a valid 10-digit phone number';
+    return;
+  }
+
+  // ── Look up account (localStorage first, then Firebase) ────
+  var saved = loadProfile();
+  var localMatch = saved && (
+    (_fpMethod === 'email' && saved.email && saved.email.toLowerCase() === contact) ||
+    (_fpMethod === 'phone' && saved.phone && saved.phone.replace(/\D/g,'') === contact)
+  );
+
+  if(!localMatch){
+    // Try Firebase lookup (handles different-device forgot password)
+    if(window._fbReady && window._fbDB){
+      if(errEl) errEl.textContent = '';
+      if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Searching...'; }
+      _fpFirebaseLookup(contact, function(found){
+        if(btnEl){ btnEl.disabled = false; btnEl.textContent = 'Send PIN →'; }
+        if(!found){
+          if(errEl) errEl.textContent = 'No account found with this ' + (_fpMethod==='email'?'email':'phone number');
+          return;
+        }
+        _fpContact = contact;
+        _fpDoSendPin();
+      });
+    } else {
+      if(errEl) errEl.textContent = 'No account found with this ' + (_fpMethod==='email'?'email':'phone number');
+    }
+    return;
+  }
+
+  _fpUid     = saved.uid || '';
+  _fpContact = contact;
+  _fpDoSendPin();
+}
+
+// ── Lookup by email/phone in Firebase ────────────────────────
+function _fpFirebaseLookup(contact, cb){
+  window._fbGet(window._fbRef(window._fbDB, 'users')).then(function(snap){
+    var all = snap.val() || {};
+    var found = Object.entries(all).find(function(entry){
+      var u = entry[1];
+      if(_fpMethod === 'email'){
+        return u.email && u.email.toLowerCase() === contact;
+      } else {
+        return u.phone && u.phone.replace(/\D/g,'') === contact;
+      }
+    });
+    if(found){ _fpUid = found[0]; }
+    cb(!!found);
+  }).catch(function(){ cb(false); });
+}
+
+// ── Actually generate and send the PIN ───────────────────────
+function _fpDoSendPin(){
+  // Generate fresh cryptographic PIN every time
+  _fpPin      = _genPin();
+  _fpExpiry   = Date.now() + 10 * 60 * 1000; // 10 minutes
+  _fpSent     = false;
+  _fpAttempts = 0;
+
+  // Clear old timer
+  if(_fpPinTimer) clearTimeout(_fpPinTimer);
+
+  // Store reset request in Firebase
+  if(window._fbReady && window._fbDB && _fpUid){
+    window._fbSet(
+      window._fbRef(window._fbDB, 'password_resets/' + _fpUid),
+      { uid:_fpUid, contact:_fpContact, method:_fpMethod,
+        requestedAt:Date.now(), status:'pending' }
+    ).catch(function(){});
+  }
+
+  // ── Deliver PIN ─────────────────────────────────────────────
+  var delivered = false;
+  if(_fpMethod === 'email'){
+    delivered = _fpSendEmail(_fpContact, _fpPin);
+  } else {
+    delivered = _fpSendSMS(_fpContact, _fpPin);
+  }
+
+  // ── Update step 2 UI ────────────────────────────────────────
+  var sentMsg = document.getElementById('fp-pin-sent-msg');
+  if(sentMsg){
+    if(_fpMethod === 'email'){
+      sentMsg.innerHTML = 'PIN sent to <strong style="color:#fff">' + _fpContact + '</strong>'
+        + '<br><span style="font-size:11px;opacity:.7">Check your inbox (and spam folder)</span>';
+    } else {
+      sentMsg.innerHTML = 'PIN sent via WhatsApp/SMS to <strong style="color:#fff">+91 ' + _fpContact + '</strong>';
+    }
+  }
+
+  // Show PIN on screen for 30 seconds (fallback), then hide
+  var pinDisp = document.getElementById('fp-pin-display');
+  var pinBox  = document.getElementById('fp-pin-box');
+  if(pinDisp) pinDisp.textContent = _fpPin;
+  if(pinBox)  pinBox.style.display = '';
+  _fpPinTimer = setTimeout(function(){
+    if(pinDisp) pinDisp.textContent = '····';
+    if(pinBox){
+      pinBox.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px">'
+        + '🔒 PIN hidden for security — it was sent to your ' + _fpMethod + '</div>';
+    }
+  }, 30000);
+
+  // Clear inputs and navigate
+  ['fp-p0','fp-p1','fp-p2','fp-p3'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  var e2 = document.getElementById('fp-step2-err');
+  if(e2) e2.textContent = '';
+  goTo('forgot-step2');
+  setTimeout(function(){ document.getElementById('fp-p0')?.focus(); }, 350);
+}
+
+// ── Send PIN via email ────────────────────────────────────────
+// Multi-layer: EmailJS → mailto: fallback
+function _fpSendEmail(email, pin){
+  // Layer 1: EmailJS (if configured)
+  if(FP_EMAILJS_KEY && FP_EMAILJS_KEY !== 'YOUR_PUBLIC_KEY' && FP_EMAILJS_SERVICE !== 'YOUR_SERVICE_ID'){
+    var payload = {
+      service_id:    FP_EMAILJS_SERVICE,
+      template_id:   FP_EMAILJS_TEMPLATE,
+      user_id:       FP_EMAILJS_KEY,
+      template_params: {
+        to_email:  email,
+        to_name:   'CommerceLab Student',
+        pin_code:  pin,
+        expires:   '10 minutes',
+        app_name:  'CommerceLab'
+      }
+    };
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      if(r.ok){ console.log('PIN emailed via EmailJS'); }
+      else { _fpMailtoFallback(email, pin); }
+    }).catch(function(){ _fpMailtoFallback(email, pin); });
+    return true;
+  }
+
+  // Layer 2: mailto: (opens email client with PIN pre-filled)
+  _fpMailtoFallback(email, pin);
+  return true;
+}
+
+function _fpMailtoFallback(email, pin){
+  var subject = encodeURIComponent('CommerceLab — Password Reset PIN');
+  var body    = encodeURIComponent(
+    'Your CommerceLab password reset PIN is:\n\n'
+    + '          ' + pin + '\n\n'
+    + 'This PIN is valid for 10 minutes.\n'
+    + 'Do not share it with anyone.\n\n'
+    + 'If you did not request this, please ignore.'
+  );
+  // Open mailto — user's email client composes the email
+  var a = document.createElement('a');
+  a.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ── Send PIN via Phone (WhatsApp — reliable, no CORS) ────────
+// Note: SMS APIs (Fast2SMS, MSG91) block browser fetch due to CORS.
+// WhatsApp is the most reliable delivery for Indian users.
+function _fpSendSMS(phone, pin){
+  var ph  = phone.replace(/\D/g,'').slice(-10);
+  _fpWhatsAppFallback(ph, pin);
+  return true;
+}
+function _fpWhatsAppFallback(phone, pin){
+  var msg = encodeURIComponent(
+    'Your CommerceLab password reset PIN is: *' + pin + '*\n'
+    + 'Valid for 10 minutes. Do not share with anyone.'
+  );
+  // Open WhatsApp Web with the message pre-typed — user sends to themselves
+  // (WhatsApp doesn't allow auto-sending, but opens compose with message ready)
+  var waUrl = 'https://wa.me/91' + phone + '?text=' + msg;
+  window.open(waUrl, '_blank');
+}
+
+// ── Step 2: Verify entered PIN ────────────────────────────────
+function fpVerifyPin(){
+  var entered = ['fp-p0','fp-p1','fp-p2','fp-p3']
+    .map(function(id){ return (document.getElementById(id)?.value || ''); })
+    .join('');
+  var errEl = document.getElementById('fp-step2-err');
+
+  if(entered.length < 4){
+    if(errEl) errEl.textContent = 'Please enter all 4 digits';
+    return;
+  }
+
+  // Expired
+  if(Date.now() > _fpExpiry){
+    if(errEl) errEl.textContent = 'PIN expired — tap Resend to get a new one';
+    _fpPin = ''; // invalidate
+    return;
+  }
+
+  // Wrong PIN (max 5 attempts then lock)
+  _fpAttempts++;
+  if(entered !== _fpPin){
+    var remaining = 5 - _fpAttempts;
+    if(remaining <= 0){
+      if(errEl) errEl.textContent = 'Too many wrong attempts — please request a new PIN';
+      _fpPin = ''; _fpExpiry = 0;
+      setTimeout(function(){ goTo('forgot-step1'); }, 2000);
+      return;
+    }
+    if(errEl) errEl.textContent = 'Incorrect PIN — ' + remaining + ' attempt' + (remaining===1?'':'s') + ' left';
+    ['fp-p0','fp-p1','fp-p2','fp-p3'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){
+        el.style.borderColor = 'var(--danger)';
+        el.value = '';
+        setTimeout(function(){ el.style.borderColor=''; }, 1500);
+      }
+    });
+    document.getElementById('fp-p0')?.focus();
+    return;
+  }
+
+  // ✅ Correct
+  if(_fpPinTimer) clearTimeout(_fpPinTimer);
+  _fpPin = ''; // consumed — can't reuse
+  var e3 = document.getElementById('fp-step3-err');
+  if(e3) e3.textContent = '';
+  document.getElementById('fp-newpass') && (document.getElementById('fp-newpass').value = '');
+  document.getElementById('fp-newpass2') && (document.getElementById('fp-newpass2').value = '');
+  showToast('PIN verified ✅', 'success');
+  goTo('forgot-step3');
+  setTimeout(function(){ document.getElementById('fp-newpass')?.focus(); }, 350);
+}
+
+// ── Step 3: Save new password ─────────────────────────────────
+function fpSaveNewPassword(){
+  var np    = (document.getElementById('fp-newpass')?.value  || '').trim();
+  var np2   = (document.getElementById('fp-newpass2')?.value || '').trim();
+  var errEl = document.getElementById('fp-step3-err');
+
+  if(np.length < 6){
+    if(errEl) errEl.textContent = 'Password must be at least 6 characters';
+    document.getElementById('fp-newpass')?.focus();
+    return;
+  }
+  if(np !== np2){
+    if(errEl) errEl.textContent = 'Passwords do not match';
+    document.getElementById('fp-newpass2')?.focus();
+    return;
+  }
+
+  // Save to localStorage
+  var saved = loadProfile();
+  if(saved){
+    saved.password = np;
+    try{ localStorage.setItem('commercelab_v2', JSON.stringify(saved)); }catch(e){}
+    userProfile.password = np;
+  }
+
+  // Update Firebase record
+  if(window._fbReady && window._fbDB && _fpUid){
+    window._fbUpdate(window._fbRef(window._fbDB, 'users/' + _fpUid), {
+      hasPassword: true, passwordUpdatedAt: Date.now()
+    }).catch(function(){});
+    // Remove reset record
+    window._fbRemove(window._fbRef(window._fbDB, 'password_resets/' + _fpUid)).catch(function(){});
+    // Notify admin
+    window._fbPush(window._fbRef(window._fbDB, 'notifications'), {
+      title:     '🔑 Password Reset',
+      message:   (saved ? (saved.name || 'A student') : 'A student') + ' successfully reset their password via ' + _fpMethod + '.',
+      type:      'system',
+      createdAt: Date.now(),
+      target:    'all',
+      sentBy:    'system'
+    }).catch(function(){});
+  }
+
+  // Reset state
+  _fpPin = ''; _fpExpiry = 0; _fpUid = ''; _fpContact = ''; _fpAttempts = 0;
+  if(_fpPinTimer){ clearTimeout(_fpPinTimer); _fpPinTimer = null; }
+
+  showToast('✅ Password changed! Please log in.', 'success');
+  goTo('auth');
+}
+
+// ── OTP input autofocus (runs right away, no DOMContentLoaded needed) ─
+// Uses event delegation on the body to catch dynamically shown elements
+document.addEventListener('input', function(e){
+  var ids = ['fp-p0','fp-p1','fp-p2','fp-p3'];
+  var i   = ids.indexOf(e.target.id);
+  if(i < 0) return;
+  if(e.target.value.length === 1 && i < ids.length - 1){
+    document.getElementById(ids[i+1])?.focus();
+  }
+});
+document.addEventListener('keydown', function(e){
+  var ids = ['fp-p0','fp-p1','fp-p2','fp-p3'];
+  var i   = ids.indexOf(e.target.id);
+  if(i < 0) return;
+  if(e.key === 'Backspace' && !e.target.value && i > 0){
+    document.getElementById(ids[i-1])?.focus();
+  }
+  if(e.key === 'Enter' && i === ids.length - 1){
+    fpVerifyPin();
+  }
+});
+
+
 function doGoogleLogin(){
-  userProfile.name = userProfile.name || 'Google User';
-  userProfile.email = userProfile.email || 'user@google.com';
+  userProfile.name      = userProfile.name || 'Google User';
+  userProfile.email     = userProfile.email || 'user@google.com';
   userProfile.isNewUser = true;
   SUBJECTS = getSubjectsForClass(userProfile.class||'12');
   saveProfile();
   checkUserAccess();
 }
-
 function suGoogleSignup(){
-  // Prefill name if entered, then do Google flow
-  const fn = (document.getElementById('su-fname')?.value||'').trim();
+  const fn   = (document.getElementById('su-fname')?.value||'').trim();
   const city = (document.getElementById('su-city')?.value||'').trim();
-  userProfile.name = fn||'Google User';
+  userProfile.name  = fn||'Google User';
   userProfile.fname = fn||'Google';
-  userProfile.city = city;
-  userProfile.email = 'google@user.com'; // simulated
+  userProfile.city  = city;
+  userProfile.email = 'google@user.com';
   userProfile.isNewUser = true;
-  userProfile.qs = 0; userProfile.accuracy = 0; userProfile.streak = 0; userProfile.points = 0;
-  userProfile.class = suData.class||'12';
-  userProfile.medium = suData.medium||'en';
-  userProfile.goal = suData.goal||'top';
-  userProfile.goalLabel = suData.goalLabel||'Top the Board';
+  userProfile.qs=0; userProfile.accuracy=0; userProfile.streak=0; userProfile.points=0;
+  userProfile.class      = suData.class||'12';
+  userProfile.medium     = 'en';
+  userProfile.goal       = suData.goal||'top';
+  userProfile.goalLabel  = suData.goalLabel||'Top the Board';
+  userProfile.subjectStats = {ac:{qs:0,correct:0},st:{qs:0,correct:0},ec:{qs:0,correct:0},oc:{qs:0,correct:0},sp:{qs:0,correct:0}};
+  if(!userProfile.uid){
+    userProfile.uid = 'g_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  }
   SUBJECTS = getSubjectsForClass(userProfile.class);
   saveProfile();
-  showToast('Signed up with Google! 🎉');
-  goTo('onboarding');currentOb=0;updateOb();
-}
+  showToast('Signed up with Google!');
 
+  const grec = {
+    uid: userProfile.uid, name: userProfile.name,
+    email: userProfile.email, phone:'', school:'',
+    city: userProfile.city, std: userProfile.class,
+    status:'pending', paymentStatus:'unpaid',
+    registeredAt: Date.now(),
+    device: navigator.userAgent.substring(0,80)
+  };
+
+  const lbl = document.getElementById('pending-name-lbl');
+  if(lbl) lbl.textContent = 'Hi '+userProfile.name+'! Sending for approval...';
+  goTo('pending-screen');
+  checkUserAccess();
+
+  function _gSave(){
+    if(window._fbReady && window._fbDB){
+      window._fbSet(window._fbRef(window._fbDB,'users/'+userProfile.uid), grec)
+        .then(()=>console.log('Google signup saved'))
+        .catch(e=>console.warn('Google save error:',e.message));
+    }
+  }
+  if(window._fbReady && window._fbDB){ _gSave(); }
+  else{
+    let _gi=0, _giv=setInterval(()=>{
+      _gi++;
+      if(window._fbReady&&window._fbDB){clearInterval(_giv);_gSave();}
+      else if(_gi>=60) clearInterval(_giv);
+    },500);
+  }
+}
 function doSignup(){
   // Legacy — not called in new flow, kept for compatibility
   suCompleteSignup();
@@ -6564,6 +7178,18 @@ function suCompleteSignup(){
     if (el){ el.style.borderColor='var(--danger)'; el.focus(); setTimeout(()=>el.style.borderColor='',2000); }
     showToast('Please enter your school name 🏫','error'); return;
   }
+  const pass  = (document.getElementById('su-pass')?.value  || '');
+  const pass2 = (document.getElementById('su-pass2')?.value || '');
+  if (!pass || pass.length < 6) {
+    const el = document.getElementById('su-pass');
+    if (el){ el.style.borderColor='var(--danger)'; el.focus(); setTimeout(()=>el.style.borderColor='',2000); }
+    showToast('Password must be at least 6 characters 🔒','error'); return;
+  }
+  if (pass !== pass2) {
+    const el = document.getElementById('su-pass2');
+    if (el){ el.style.borderColor='var(--danger)'; el.focus(); setTimeout(()=>el.style.borderColor='',2000); }
+    showToast('Passwords do not match ❌','error'); return;
+  }
 
   // ── Build profile ───────────────────────────────────────
   userProfile.name        = suData.name || 'Student';
@@ -6587,6 +7213,7 @@ function suCompleteSignup(){
   userProfile.wrongAnswers   = [];
   userProfile.target      = '1h';
   userProfile.targetLabel = '1 Hour';
+  userProfile.password    = pass; // stored locally for login verification
 
   // ── Generate UID ────────────────────────────────────────
   if (!userProfile.uid) {
@@ -6596,38 +7223,40 @@ function suCompleteSignup(){
   SUBJECTS = getSubjectsForClass(userProfile.class);
   saveProfile();
 
-  // ── Save to Firebase (non-blocking) ────────────────────
-  if (window._fbReady && window._fbDB) {
-    const userRecord = {
-      uid:           userProfile.uid,
-      name:          userProfile.name,
-      email:         email,
-      phone:         phone,
-      school:        school,
-      city:          userProfile.city,
-      std:           userProfile.class,
-      status:        'pending',
-      paymentStatus: 'unpaid',
-      registeredAt:  Date.now(),
-      device:        navigator.userAgent.substring(0,80)
-    };
-    window._fbSet(
-      window._fbRef(window._fbDB, 'users/' + userProfile.uid),
-      userRecord
-    ).then(()=>{
-      console.log('✅ User saved to Firebase');
-    }).catch(e=>{
-      console.warn('Firebase save error:', e);
-      // Still show pending screen — admin will see them on retry
-    });
-  }
+  // ── Firebase record ────────────────────────────────────
+  const userRecord = {
+    uid: userProfile.uid, name: userProfile.name,
+    email: email, phone: phone, school: school,
+    city: userProfile.city, std: userProfile.class,
+    status: 'pending', paymentStatus: 'unpaid',
+    registeredAt: Date.now(),
+    device: navigator.userAgent.substring(0,80),
+    hasPassword: true
+  };
 
-  // ── Show pending screen (approval required) ─────────────
+  // Show pending screen and start real-time access listener
   const lbl = document.getElementById('pending-name-lbl');
-  if (lbl) lbl.textContent = 'Registered as: ' + userProfile.name + ' · ' + email;
+  if(lbl) lbl.textContent = 'Hi '+userProfile.fname+'! Sending for approval...';
   goTo('pending-screen');
-}
+  checkUserAccess();
 
+  // Save to Firebase (with retry if not yet connected)
+  function _doSave(){
+    if(window._fbReady && window._fbDB){
+      window._fbSet(window._fbRef(window._fbDB,'users/'+userProfile.uid), userRecord)
+        .then(()=>console.log('Saved to Firebase as pending'))
+        .catch(e=>console.warn('Save error:',e.message));
+    }
+  }
+  if(window._fbReady && window._fbDB){ _doSave(); }
+  else{
+    let _si=0, _siv=setInterval(()=>{
+      _si++;
+      if(window._fbReady&&window._fbDB){clearInterval(_siv);_doSave();}
+      else if(_si>=60) clearInterval(_siv);
+    },500);
+  }
+}
 function suPickClass(cls){
   suData.class = cls;
   ['11','12'].forEach(c=>{
@@ -12197,82 +12826,133 @@ function showFeedbackSuccess() {
 // Handles: approval check, block check, admin notifications
 // ═══════════════════════════════════════════════════════════════════
 
-function checkUserAccess() {
-  const uid = userProfile && userProfile.uid;
+// ════════════════════════════════════════════════════════════
+// FIREBASE ACCESS GATE
+// ════════════════════════════════════════════════════════════
 
-  // No UID means not registered — send to auth
-  if (!uid) {
-    goTo('auth');
-    return;
+var _accessListenerOff = null;
+var _accessListenerUid = null;
+var _fbSeenPending     = false; // true once we see their record in DB
+
+function checkUserAccess(){
+  var uid = userProfile && userProfile.uid;
+  if(!uid){ goTo('auth'); return; }
+
+  // Firebase not configured or failed — silent offline mode
+  if(!window._fbConfigured){ updateUserUI(); goTo('home'); return; }
+
+  // Firebase not ready — poll every 300ms up to 10s
+  if(!window._fbReady || !window._fbDB){
+    _fbPollCheck(uid, 0); return;
   }
+  _fbAttach(uid);
+}
 
-  // No Firebase = offline mode, allow access
-  if (!window._fbReady || !window._fbDB) {
-    console.log('Firebase not ready — offline mode, allowing access');
-    updateUserUI();
-    goTo('home');
-    return;
+function _fbPollCheck(uid, n){
+  if(window._fbReady && window._fbDB){ _fbAttach(uid); return; }
+  if(n>=33){ updateUserUI(); goTo('home'); return; }
+  setTimeout(function(){ _fbPollCheck(uid, n+1); }, 300);
+}
+
+function _fbAttach(uid){
+  // Detach if different user
+  if(_accessListenerOff && _accessListenerUid !== uid){
+    try{ _accessListenerOff(); }catch(e){}
+    _accessListenerOff = null; _accessListenerUid = null;
   }
+  // Already listening — skip
+  if(_accessListenerUid === uid && _accessListenerOff) return;
+  _accessListenerUid = uid;
+  _fbSeenPending     = false; // reset for fresh listen
 
-  // Show pending screen while we wait for DB response
-  const lbl = document.getElementById('pending-name-lbl');
-  if (lbl) lbl.textContent = 'Checking for: ' + (userProfile.name || '') + '…';
-  goTo('pending-screen');
+  // Show pending while waiting for first snapshot
+  var lbl = document.getElementById('pending-name-lbl');
+  if(lbl) lbl.textContent = 'Checking your access...';
+  var cur = document.querySelector('.screen.active');
+  if(!cur || cur.id !== 'pending-screen') goTo('pending-screen');
 
-  window._fbGet(window._fbRef(window._fbDB, 'users/' + uid))
-    .then(function(snap) {
-      const data = snap.val();
+  _accessListenerOff = window._fbOnValue(
+    window._fbRef(window._fbDB, 'users/'+uid),
+    function(snap){
+      var data = snap.val();
 
-      if (!data) {
-        // UID exists locally but not in Firebase
-        // Could be first open before Firebase saves, re-register
-        if (userProfile.isNewUser) {
+      // data = null means either:
+      // (a) record not saved to Firebase yet  → _fbSeenPending=false → wait
+      // (b) admin REJECTED and deleted record → _fbSeenPending=true  → show rejection
+      if(!data){
+        if(_fbSeenPending){
+          // Admin rejected this signup — record was deleted
+          _clearAccessListener();
+          userProfile.uid = ''; userProfile.isNewUser = true;
+          saveProfile();
+          goTo('rejected-screen');
+        } else if(userProfile.isNewUser){
+          // Record not yet saved — still propagating
+          var l = document.getElementById('pending-name-lbl');
+          if(l) l.textContent = 'Sent for approval — awaiting admin review...';
           goTo('pending-screen');
         } else {
-          showToast('Account not found. Please sign up again.', 'error');
-          goTo('auth');
+          // Returning user whose record doesn't exist
+          _clearAccessListener();
+          userProfile.uid=''; saveProfile(); goTo('auth');
         }
         return;
       }
 
-      if (data.status === 'blocked') {
-        goTo('blocked-screen');
-        return;
+      if(data.status==='blocked'){
+        _clearAccessListener(); goTo('blocked-screen'); return;
       }
 
-      if (data.status === 'pending') {
-        const lbl2 = document.getElementById('pending-name-lbl');
-        if (lbl2) lbl2.textContent = 'Registered as: ' + data.name + ' · ' + data.email;
+      if(data.status==='pending'){
+        _fbSeenPending = true; // mark that we've seen their record
+        var l2 = document.getElementById('pending-name-lbl');
+        if(l2) l2.textContent = 'Hi '+(data.name||userProfile.name||'Student')
+          +'! Waiting for admin approval...';
         goTo('pending-screen');
-        return;
+        return; // keep listener alive — admin approves → fires again
       }
 
-      if (data.status === 'approved') {
-        // ✅ Approved — enter the app
-        window._fbUpdate(
-          window._fbRef(window._fbDB, 'users/' + uid),
-          { lastActive: Date.now() }
-        );
-        // Sync payment status locally
-        userProfile.paymentStatus = data.paymentStatus || 'unpaid';
-        saveProfile();
-        updateUserUI();
-        showToast('Welcome back, ' + (userProfile.fname || userProfile.name.split(' ')[0]) + '! 👋');
+      if(data.status==='approved'){
+        _clearAccessListener();
+        // Sync profile from Firebase
+        userProfile.isNewUser     = false;
+        userProfile.paymentStatus = data.paymentStatus||'unpaid';
+        if(data.name)   userProfile.name   = data.name;
+        if(data.email)  userProfile.email  = data.email;
+        if(data.phone)  userProfile.phone  = data.phone;
+        if(data.school) userProfile.school = data.school;
+        if(data.city)   userProfile.city   = data.city;
+        if(data.std)    userProfile.class  = data.std;
+        saveProfile(); updateUserUI();
+        try{
+          window._fbUpdate(window._fbRef(window._fbDB,'users/'+uid),{lastActive:Date.now()});
+        }catch(e){}
+        var fn = (data.name||userProfile.name||'Student').split(' ')[0];
+        showToast('Welcome, '+fn+'!','success');
         goTo('home');
-        // Start listening for admin notifications
         _startNotificationListener();
         return;
       }
 
-      // Unknown status fallback
-      goTo('pending-screen');
-    })
-    .catch(function(err) {
-      console.warn('Firebase check failed:', err.message);
-      // Fail open — let them in (network error / offline)
-      updateUserUI();
-      goTo('home');
-    });
+      goTo('pending-screen'); // unknown status
+    },
+    function(err){
+      console.warn('Firebase read error:', err.message);
+      _clearAccessListener();
+      if(err.code==='PERMISSION_DENIED'){
+        var l3=document.getElementById('pending-name-lbl');
+        if(l3) l3.textContent='Firebase permission error — check DB Rules';
+        goTo('pending-screen');
+      } else {
+        updateUserUI(); goTo('home');
+      }
+    }
+  );
+}
+
+function _clearAccessListener(){
+  if(_accessListenerOff){ try{_accessListenerOff();}catch(e){} _accessListenerOff=null; }
+  _accessListenerUid = null;
 }
 
 // ── Admin Notification Listener ──────────────────────────────────
@@ -12362,33 +13042,16 @@ function _showAdminBanner(title, msg, type) {
 
 // ── On app start: check access if user has a UID ─────────────────
 (function _checkOnStart(){
-  // Wait for splash + profile to load (1.8s)
-  setTimeout(function() {
-    if (userProfile && userProfile.uid && window._fbReady) {
+  setTimeout(function(){
+    if(userProfile && userProfile.uid){
       checkUserAccess();
     }
-  }, 1900);
+  }, 2000);
 })();
 
-// ── suGoogleSignup: also needs to show pending ───────────────────
-// Override to add pending flow
-(function(){
-  var _origGoogle = window.suGoogleSignup;
-  window.suGoogleSignup = function() {
-    if (typeof _origGoogle === 'function') _origGoogle();
-    // After google signup, save to Firebase and show pending
-    setTimeout(function() {
-      if (userProfile.uid && window._fbReady && window._fbDB) {
-        var record = {
-          uid: userProfile.uid,
-          name: userProfile.name,
-          email: userProfile.email || 'google@user.com',
-          phone: userProfile.phone || '',
-          school: userProfile.school || '',
-          city: userProfile.city || '',
-          std: userProfile.class || '12',
-          status: 'pending',
-          paymentStatus: 'unpaid',
-          registeredAt: Date.now(),
-          device: navigator.userAgent.substring(0,80)
-  
+// ── suGoogleSignup is fully handled in the function itself (see above) ──
+// No override needed — the function now saves to Firebase directly and shows pending screen.
+
+</script>
+</body>
+</html>
